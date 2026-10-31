@@ -94,6 +94,12 @@ const createReading = async (req, res, next) => {
 const getReadings = async (req, res) => {
   try {
     const { date } = req.query;
+
+    const page = Math.max(parseInt(req.query.page) || 1, 1);
+    const limit = Math.min(Math.max(parseInt(req.query.limit) || 10, 1), 100);
+    const offset = (page - 1) * limit;
+    let countResult;
+
     let rows;
 
     if (date !== undefined) {
@@ -104,23 +110,48 @@ const getReadings = async (req, res) => {
         });
       }
 
-      ({ rows } = await db.query(
-        `SELECT * FROM readings 
+      ({ rows: countResult } = await db.query(
+        `SELECT COUNT(*) FROM readings 
          WHERE user_id = $1 AND reading_date = $2`,
         [req.user.id, date]
       ));
+
+      ({ rows } = await db.query(
+        `SELECT * FROM readings 
+         WHERE user_id = $1 AND reading_date = $2
+         ORDER BY reading_date DESC
+         LIMIT $3 OFFSET $4`,
+        [req.user.id, date, limit, offset]
+      ));
     } else {
+      ({ rows: countResult } = await db.query(
+        `SELECT COUNT(*) FROM readings
+         WHERE user_id = $1`,
+        [req.user.id]
+      ));
       ({ rows } = await db.query(
         `SELECT * FROM readings 
          WHERE user_id = $1 
-         ORDER BY reading_date DESC`,
-        [req.user.id]
+         ORDER BY reading_date DESC
+         LIMIT $2 OFFSET $3`,
+        [req.user.id, limit, offset]
       ));
     }
 
+    const totalRecords = parseInt(countResult[0].count);
+    const totalPages = Math.ceil(totalRecords / limit);
     const readings = rows.map(toReading).sort(bySlotOrder);
 
-    res.status(200).json({success: true, readings });
+    res.status(200).json({
+      success: true, 
+      readings, pagination: {
+      totalRecords,
+      totalPages,
+      currentPage: page,
+      limit,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1
+    } });
 
   } catch (err) {
     return res.status(500).json({

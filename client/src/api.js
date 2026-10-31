@@ -55,7 +55,7 @@ export const api = {
   signup: (body) => request('/auth/signup', { method: 'POST', body }),
   login: (body) => request('/auth/login', { method: 'POST', body }),
   logout: () => request('/auth/logout', { method: 'POST' }),
-  addReading: (body) => request('/reading', { method: 'POST', body }),
+  addReading: (body) => request('/reading/upload-reading', { method: 'POST', body }),
   updateReading: (id, body) => request(`/reading/${id}`, { method: 'PUT', body }),
   deleteReading: (id) => request(`/reading/${id}`, { method: 'DELETE' }),
   report: (type, date) => request(`/reports/${type}?date=${date}`),
