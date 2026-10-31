@@ -4,6 +4,13 @@ const authRoute = require("./routes/auth.route");
 const cookieParser = require("cookie-parser")
 const readingRoute = require("./routes/reading.route");
 const reportRoute = require("./routes/report.route");
+const cors = require('cors');
+const { FRONTENDURL } = require('./config');
+
+app.use(cors({
+    origin: FRONTENDURL,
+    credentials: true
+}))
 
 app.use(express.json());
 app.use(cookieParser());

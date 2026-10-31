@@ -35,10 +35,10 @@ const dailyReport = async (req, res) => {
   try {
     const date = req.reportDate;
 
-    return res.status(200).json({
-      success: true,
-      message: await buildReport(req.user.id, "daily", date, date, true),
-    });
+    return res.status(200).json(
+      
+      await buildReport(req.user.id, "daily", date, date, true),
+    );
   } catch (err) {
     return res.status(500).json({
       success: false,
@@ -50,10 +50,9 @@ const dailyReport = async (req, res) => {
 const monthToDateReport = async (req, res) => {
   try {
     const { from, to } = monthToDateRange(req.reportDate);
-    return res.json({
-      success: true,
-      message: await buildReport(req.user.id, "month-to-date", from, to, false),
-    });
+    return res.json(
+      await buildReport(req.user.id, "month-to-date", from, to, false),
+    );
   } catch (err) {
     return req.status(500).json({
         success: false,
@@ -66,7 +65,7 @@ const monthlyReport = async (req, res) => {
   try {
     const { from, to } = previousMonthRange(req.reportDate);
     
-    return res.json({success: true, message: await buildReport(req.user.id, "monthly", from, to, false)});
+    return res.json( await buildReport(req.user.id, "monthly", from, to, false));
   } catch (err) {
     return res.status(500).json({
         success: false,

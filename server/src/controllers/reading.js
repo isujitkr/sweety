@@ -132,7 +132,7 @@ const getReadings = async (req, res) => {
 
 const updateReading = async (req, res) => {
   try {
-    const id = req.params.id;
+    const id = Number(req.params.id); 
     if (!Number.isInteger(id)) {
       return res.status(404).json({ status: false, error: 'Reading not found.' });
     }
@@ -174,14 +174,15 @@ const updateReading = async (req, res) => {
 
 const deleteReading = async (req, res) => {
   try {
-    const id = req.params.id;  
-    const existing = await db.query(
-      'SELECT * FROM readings WHERE id = $1 AND user_id = $2',
-      [id, req.user.id]
-    );
-
-    if (existing.rows.length === 0) {
-      return res.status(404).json({ status: false, error: 'Reading not found.' });
+    const id = Number(req.params.id);
+    const result = Number.isInteger(id)
+      ? await db.query('DELETE FROM readings WHERE id = $1 AND user_id = $2', [
+          id,
+          req.user.id,
+        ])
+      : { rowCount: 0 };
+    if (result.rowCount === 0) {
+      return res.status(404).json({ error: 'Reading not found.' });
     }
     res.status(204).end();
   } catch (err) {
