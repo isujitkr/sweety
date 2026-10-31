@@ -4,7 +4,9 @@
   "main": "src/index.js",
   "description": "Sweety blood glucose tracker - API",
   "scripts": {
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "migrate": "node scripts/migrate.js",
+    "seed": "node scripts/seed.js"
   },
   "keywords": [],
   "author": "",
