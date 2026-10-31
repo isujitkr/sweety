@@ -84,7 +84,7 @@ const createReading = async (req, res, next) => {
             });
         }
 
-        return res.status(400).json({
+        return res.status(500).json({
             success: false,
             message: err.message
         })
@@ -123,7 +123,7 @@ const getReadings = async (req, res) => {
     res.status(200).json({success: true, readings });
 
   } catch (err) {
-    return res.status(400).json({
+    return res.status(500).json({
         success: false,
         message: err.message
     })
@@ -165,7 +165,7 @@ const updateReading = async (req, res) => {
     if (err.code === '23505') {
       return res.status(409).json({ status: false, error: duplicateSlotMessage(req.body.slot) });
     }
-    return req.status(400).json({
+    return req.status(500).json({
         success: false,
         message: err.message
     })
@@ -185,7 +185,7 @@ const deleteReading = async (req, res) => {
     }
     res.status(204).end();
   } catch (err) {
-    return res.status(400).json({
+    return res.status(500).json({
         status: false,
         message: err.message
     })
